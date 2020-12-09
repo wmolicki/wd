@@ -20,17 +20,16 @@ var rootCmd = &cobra.Command{
 			log.Fatalf("could not open conf file: %v", err)
 		}
 
-		config, err := deployed.LoadConfig(r)
+		conf, err := deployed.LoadConfig(r);
 		if err != nil {
-			log.Fatalf("could not load config: %v", err)
+			log.Fatalf("could not load config file: %v", err)
 		}
 
-		env := config.Def.Env
-		services := deployed.LoadServices(config, env)
-
-		versions := deployed.FetchVersions(services)
-		for i, version := range versions {
-			fmt.Printf("service %d: %s\n", i, version)
+		services := deployed.LoadServices(conf, "qa")
+		
+		results := deployed.FetchVersions(services)
+		for _, result := range results {
+			fmt.Printf("%s: %s\n", result.Name, result.Version)
 		}
 	},
 }

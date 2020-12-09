@@ -1,44 +1,51 @@
 ---
   services:
-    - name: qa
-      url: https://api.cdnjs.com/libraries/jquery
-      path: autoupdate.source
+    - name: catalogue-api
+      url: https://catalogue-qa.udpmarkit.net/__api/
+      path: properties.build
       env: qa
 
-    - name: calendar
-      url: http://calapi.inadiutorium.cz/api/v0/en/calendars/default
-      path: sanctorale.language
+    - name: identity-api
+      url: https://catalogue-qa.udpmarkit.net/api/identity/v2/
+      path: build
       env: qa
 
-    - name: food
-      url: https://world.openfoodfacts.org/api/v0/product/737628064502.json
-      path: product.nutriscore_score
+    - name: permissions-api
+      url: https://catalogue-qa.udpmarkit.net/api/permissions/status/
+      path: tag
       env: qa
 
-    - name: timeouting
-      url: https://httpstat.us/200?sleep=5000
-      path: wont.happen.anyway
+    - name: librarian
+      url: https://catalogue-qa.udpmarkit.net/api/librarian/actuator/info
+      path: build
       env: qa
 
-    - name: dev
-      url: https://api.cdnjs.com/libraries/jquery
-      path: autoupdate.source
+    - name: consumption
+      url: https://catalogue-qa.udpmarkit.net/api/consumption/health
+      path: data.attributes.commit
+      env: qa
+
+    - name: catalogue-api
+      url: https://catalogue-qa.udpmarkit.net/__api/
+      path: properties.build
       env: dev
 
-    - name: calendar
-      url: http://calapi.inadiutorium.cz/api/v0/en/calendars/default
-      path: sanctorale.language
+    - name: identity-api
+      url: https://catalogue-qa.udpmarkit.net/api/identity/v2/
+      path: build
       env: dev
 
-    - name: food
-      url: https://world.openfoodfacts.org/api/v0/product/737628064502.json
-      path: product.nutriscore_score
+    - name: permissions-api
+      url: https://catalogue-qa.udpmarkit.net/api/permissions/status/
+      path: tag
       env: dev
 
-    - name: timeouting
-      url: https://httpstat.us/200?sleep=5000
-      path: wont.happen.anyway
+    - name: librarian
+      url: https://catalogue-qa.udpmarkit.net/api/librarian/actuator/info
+      path: build
       env: dev
 
-  defaults:
-    env: qa
+    - name: consumption
+      url: https://catalogue-qa.udpmarkit.net/api/consumption/health
+      path: data.attributes.commit
+      env: dev

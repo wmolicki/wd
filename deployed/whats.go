@@ -63,7 +63,7 @@ func FetchVersions(services []Service) (result []Result) {
 	resultC := make(chan Result)
 	// errorsC := make(chan string)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	var wg sync.WaitGroup
