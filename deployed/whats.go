@@ -44,7 +44,7 @@ func LoadConfig(reader io.Reader) (*Conf, error) {
 }
 
 func LoadServices(config *Conf, env string) []Service {
-	result := make([]Service, 1)
+	result := make([]Service, 0)
 	for _, svc := range config.Svc {
 		if svc.Env == env {
 			result = append(result, svc)
@@ -115,10 +115,6 @@ func FetchVersions(services []Service) (result []Result) {
 			resultC <- Result{Name: svc.Name, Version: value.String()}
 		}(svc)
 	}
-
-	// for version := range resultC {
-	// 	result = append(result, version)
-	// }
 
 	go func() {
 		wg.Wait()
