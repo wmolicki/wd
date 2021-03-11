@@ -38,7 +38,7 @@ func TestLoadSingleService(t *testing.T) {
 	}
 
 	want := []Service{Service{Name: "auth", Url: "https://api.cdnjs.com/libraries/jquery", Path: "autoupdate.source"}}
-	got := LoadServices(c)
+	got := LoadServices(c, "qa")
 
 	if !reflect.DeepEqual(got, want) {
 		log.Fatalf("got %v, want %v", got, want)
@@ -68,7 +68,7 @@ func TestLoadManyServices(t *testing.T) {
 		Service{Name: "auth", Url: "https://api.cdnjs.com/libraries/jquery", Path: "autoupdate.source"},
 		Service{Name: "search", Url: "https://search-service/s", Path: "something"},
 	}
-	got := LoadServices(c)
+	got := LoadServices(c, "qa")
 
 	if !reflect.DeepEqual(got, want) {
 		log.Fatalf("got %v, want %v", got, want)
