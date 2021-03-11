@@ -44,7 +44,7 @@ func LoadConfig(reader io.Reader) (*Conf, error) {
 }
 
 func LoadServices(config *Conf, env string) []Service {
-	result := make([]Service, 1)
+	result := make([]Service, 0)
 	for _, svc := range config.Svc {
 		if svc.Env == env {
 			result = append(result, svc)
@@ -63,7 +63,7 @@ func FetchVersions(services []Service) (result []Result) {
 	resultC := make(chan Result)
 	// errorsC := make(chan string)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	var wg sync.WaitGroup
@@ -115,10 +115,6 @@ func FetchVersions(services []Service) (result []Result) {
 			resultC <- Result{Name: svc.Name, Version: value.String()}
 		}(svc)
 	}
-
-	// for version := range resultC {
-	// 	result = append(result, version)
-	// }
 
 	go func() {
 		wg.Wait()
