@@ -6,7 +6,6 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
-	"math/rand"
 	"net/http"
 	"sync"
 	"time"
@@ -19,13 +18,19 @@ type Service struct {
 	Name string `yaml:"name"`
 	Url  string `yaml:"url"`
 	Path string `yaml:"path"`
+	Env  string `yaml:"env"`
+}
+
+type Defaults struct {
+	Env string `yaml:"env"`
 }
 
 type Conf struct {
 	Svc []Service `yaml:"services"`
+	Def Defaults  `yaml:"defaults"`
 }
 
-func LoadServices(reader io.Reader) ([]Service, error) {
+func LoadConfig(reader io.Reader) (*Conf, error) {
 	decoder := yaml.NewDecoder(reader)
 
 	c := Conf{}
@@ -35,15 +40,30 @@ func LoadServices(reader io.Reader) ([]Service, error) {
 		return nil, fmt.Errorf("could not decode yaml: %v", err)
 	}
 
-	return c.Svc, nil
+	return &c, nil
 }
 
-func GetVersion(services []Service) (result []string) {
+func LoadServices(config *Conf, env string) []Service {
+	result := make([]Service, 0)
+	for _, svc := range config.Svc {
+		if svc.Env == env {
+			result = append(result, svc)
+		}
+	}
+	return result
+}
 
-	resultC := make(chan string)
+type Result struct {
+	Name    string
+	Version string
+}
+
+func FetchVersions(services []Service) (result []Result) {
+
+	resultC := make(chan Result)
 	// errorsC := make(chan string)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	var wg sync.WaitGroup
@@ -62,7 +82,6 @@ func GetVersion(services []Service) (result []string) {
 			}
 			log.Printf("calling %s", svc.Url)
 			response, err := http.DefaultClient.Do(req)
-			time.Sleep(time.Duration(rand.Intn(6)) * time.Second)
 
 			if err != nil {
 				log.Printf("could not fetch version for %s: %v", svc.Name, err)
@@ -93,13 +112,9 @@ func GetVersion(services []Service) (result []string) {
 				return
 			}
 
-			resultC <- value.String()
+			resultC <- Result{Name: svc.Name, Version: value.String()}
 		}(svc)
 	}
-
-	// for version := range resultC {
-	// 	result = append(result, version)
-	// }
 
 	go func() {
 		wg.Wait()
@@ -112,6 +127,7 @@ func GetVersion(services []Service) (result []string) {
 			if !ok {
 				return result
 			}
+
 			result = append(result, version)
 		}
 	}
